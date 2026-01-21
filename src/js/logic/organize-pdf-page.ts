@@ -58,6 +58,21 @@ function initializePage() {
     document.getElementById('back-to-tools')?.addEventListener('click', () => {
         window.location.href = import.meta.env.BASE_URL;
     });
+
+    const invertOrderBtn = document.getElementById('invert-order-btn');
+    if (invertOrderBtn) invertOrderBtn.addEventListener('click', invertOrder);
+}
+
+function invertOrder() {
+    const grid = document.getElementById('page-grid');
+    if (!grid) return;
+
+    const items = Array.from(grid.children);
+    items.reverse();
+
+    items.forEach(item => grid.appendChild(item));
+
+    renumberPages();
 }
 
 function handleFileUpload(e: Event) {
@@ -160,11 +175,13 @@ function attachEventListeners(element: HTMLElement) {
 async function renderThumbnails() {
     const grid = document.getElementById('page-grid');
     const processBtn = document.getElementById('process-btn');
+    const organizeControls = document.getElementById('organize-controls');
     if (!grid) return;
 
     grid.innerHTML = '';
     grid.classList.remove('hidden');
     processBtn?.classList.remove('hidden');
+    organizeControls?.classList.remove('hidden');
 
     for (let i = 1; i <= organizeState.totalPages; i++) {
         const page = await organizeState.pdfJsDoc.getPage(i);
@@ -284,11 +301,13 @@ function resetState() {
     organizeState.totalPages = 0;
 
     const grid = document.getElementById('page-grid');
+    const organizeControls = document.getElementById('organize-controls');
     if (grid) {
         grid.innerHTML = '';
         grid.classList.add('hidden');
     }
     document.getElementById('process-btn')?.classList.add('hidden');
+    if (organizeControls) organizeControls.classList.add('hidden');
     const fileDisplayArea = document.getElementById('file-display-area');
     if (fileDisplayArea) fileDisplayArea.innerHTML = '';
 }
